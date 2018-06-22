@@ -24,8 +24,8 @@
 				$('<img />').on('load', function() {
 					var attrW = 'width',
 						attrH = 'height',
-						w = $that.attr(attrW),
-						h = $that.attr(attrH);
+						w = $that.attr(attrW) || $that.width(),
+						h = $that.attr(attrH) || $that.height();
 
 					if (!w || !h) {
 						var temp = new Image();
