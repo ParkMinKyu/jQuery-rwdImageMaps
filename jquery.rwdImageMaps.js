@@ -10,10 +10,10 @@
 */
 ;(function($) {
 	$.fn.rwdImageMaps = function() {
-		var $img = this;
+		var $target = this;
 
 		var rwdImageMap = function() {
-			$img.each(function() {
+			$target.each(function() {
 				if (typeof($(this).attr('usemap')) == 'undefined')
 					return;
 
@@ -22,22 +22,11 @@
 
 				// Since WebKit doesn't know the height until after the image has loaded, perform everything in an onload copy
 				$('<img />').on('load', function() {
-					var attrW = 'width',
-						attrH = 'height',
-						w = $that.attr(attrW) || $that.width(),
-						h = $that.attr(attrH) || $that.height();
+					var w = $that[0].naturalWidth,
+						h = $that[0].naturalHeight;
 
-					if (!w || !h) {
-						var temp = new Image();
-						temp.src = $that.attr('src');
-						if (!w)
-							w = temp.width;
-						if (!h)
-							h = temp.height;
-					}
-
-					var wPercent = $that.width()/100,
-						hPercent = $that.height()/100,
+					var wPercent = ($that.width()/$that[0].naturalWidth),
+						hPercent = ($that.height()/$that[0].naturalHeight),
 						map = $that.attr('usemap').replace('#', ''),
 						c = 'coords';
 
@@ -51,9 +40,9 @@
 
 						for (var i = 0; i < coordsPercent.length; ++i) {
 							if (i % 2 === 0)
-								coordsPercent[i] = parseInt(((coords[i]/w)*100)*wPercent);
+								coordsPercent[i] = parseInt(coords[i]*wPercent);
 							else
-								coordsPercent[i] = parseInt(((coords[i]/h)*100)*hPercent);
+								coordsPercent[i] = parseInt(coords[i]*hPercent);
 						}
 						$this.attr(c, coordsPercent.toString());
 					});
@@ -61,7 +50,6 @@
 			});
 		};
 		$(window).resize(rwdImageMap).trigger('resize');
-
 		return this;
 	};
 })(jQuery);
